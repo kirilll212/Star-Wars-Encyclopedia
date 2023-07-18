@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Form, Button, Card, Container, Row, Col, Nav, Modal } from 'react-bootstrap';
+import { Button, Card, Container, Row, Col, Nav, Modal, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
-const Encyclopedia = () => {
+const Encyclopedia = (characters) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [activeTab, setActiveTab] = useState('characters');
@@ -13,6 +14,7 @@ const Encyclopedia = () => {
   const [characterData, setCharacterData] = useState([]);
   const [planetData, setPlanetData] = useState([]);
   const [starshipData, setStarshipData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -94,6 +96,10 @@ const Encyclopedia = () => {
     }
   };
 
+  const handleAddCharacter = () => {
+    navigate('/add-character');
+  };
+
   return (
     <Container className="my-4">
       <h1 className="mb-4">Star Wars Encyclopedia</h1>
@@ -108,19 +114,26 @@ const Encyclopedia = () => {
           <Nav.Link eventKey="starships">Starships</Nav.Link>
         </Nav.Item>
       </Nav>
-      <Form>
-        <Form.Group controlId="searchForm" className="mb-3">
-          <Form.Control
-            type="text"
-            placeholder={`Search for ${activeTab}`}
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </Form.Group>
-        <Button variant="primary" onClick={searchItems} className="mb-3">
-          Search
-        </Button>
-      </Form>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <Form>
+          <Form.Group controlId="searchForm" className="mb-3">
+            <Form.Control
+              type="text"
+              placeholder={`Search for ${activeTab}`}
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+          </Form.Group>
+          <Button variant="primary" onClick={searchItems}>
+            Search
+          </Button>
+        </Form>
+        {activeTab === 'characters' && (
+          <Button variant="primary" onClick={handleAddCharacter}>
+            Add Character
+          </Button>
+        )}
+      </div>
       <Row xs={1} md={2} lg={3} xl={4} className="g-4">
         {searchResults.length > 0
           ? searchResults.map((item, index) => (
@@ -128,24 +141,12 @@ const Encyclopedia = () => {
                 <Card className="h-100" onClick={() => handleCardClick(item)}>
                   <Card.Body>
                     <Card.Title>{item.name}</Card.Title>
-                    {activeTab === 'characters' && (
-                      <>
-                        <Card.Text>Height: {item.height}</Card.Text>
-                        <Card.Text>Mass: {item.mass}</Card.Text>
-                      </>
-                    )}
-                    {activeTab === 'planets' && (
-                      <>
-                        <Card.Text>Population: {item.population}</Card.Text>
-                        <Card.Text>Terrain: {item.terrain}</Card.Text>
-                      </>
-                    )}
-                    {activeTab === 'starships' && (
-                      <>
-                        <Card.Text>Model: {item.model}</Card.Text>
-                        <Card.Text>Manufacturer: {item.manufacturer}</Card.Text>
-                      </>
-                    )}
+                    <Card.Text>
+                      <strong>Height:</strong> {item.height}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Mass:</strong> {item.mass}
+                    </Card.Text>
                   </Card.Body>
                 </Card>
               </Col>
@@ -155,24 +156,12 @@ const Encyclopedia = () => {
                 <Card className="h-100" onClick={() => handleCardClick(item)}>
                   <Card.Body>
                     <Card.Title>{item.name}</Card.Title>
-                    {activeTab === 'characters' && (
-                      <>
-                        <Card.Text>Height: {item.height}</Card.Text>
-                        <Card.Text>Mass: {item.mass}</Card.Text>
-                      </>
-                    )}
-                    {activeTab === 'planets' && (
-                      <>
-                        <Card.Text>Population: {item.population}</Card.Text>
-                        <Card.Text>Terrain: {item.terrain}</Card.Text>
-                      </>
-                    )}
-                    {activeTab === 'starships' && (
-                      <>
-                        <Card.Text>Model: {item.model}</Card.Text>
-                        <Card.Text>Manufacturer: {item.manufacturer}</Card.Text>
-                      </>
-                    )}
+                    <Card.Text>
+                      <strong>Height:</strong> {item.height}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Mass:</strong> {item.mass}
+                    </Card.Text>
                   </Card.Body>
                 </Card>
               </Col>
