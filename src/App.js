@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Encyclopedia from './components/Encyclopedia';
-import AddCharacterForm from './components/add-character/AddCharacterForm';
 
 const App = () => {
   const [characters, setCharacters] = useState([]);
 
   const addCharacter = (newCharacter) => {
-    setCharacters([...characters, newCharacter]);
+    setCharacters((prevCharacters) => [...prevCharacters, newCharacter]);
   };
 
   return (
@@ -16,11 +15,7 @@ const App = () => {
         <Routes>
           <Route
             path="/"
-            element={<Encyclopedia characters={characters} />}
-          />
-          <Route
-            path="/add-character"
-            element={<AddCharacterForm addCharacter={addCharacter} />}
+            element={<Encyclopedia characters={characters} addCharacter={addCharacter} />}
           />
         </Routes>
       </BrowserRouter>

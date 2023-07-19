@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Button, Card, Container, Row, Col, Nav, Modal } from 'react-bootstrap';
+import AddCharacterModal from './add-character/AddCharacterForm';
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
@@ -13,25 +14,36 @@ const Encyclopedia = () => {
   const [characterData, setCharacterData] = useState([]);
   const [planetData, setPlanetData] = useState([]);
   const [starshipData, setStarshipData] = useState([]);
+  const [characters, setCharacters] = useState([]);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const characterResponse = await axios.get(`${SWAPI_BASE_URL}/people/`);
+        isMounted && setCharacterData(characterResponse.data.results);
+
+        const planetResponse = await axios.get(`${SWAPI_BASE_URL}/planets/`);
+        isMounted && setPlanetData(planetResponse.data.results);
+
+        const starshipResponse = await axios.get(`${SWAPI_BASE_URL}/starships/`);
+        isMounted && setStarshipData(starshipResponse.data.results);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const characterResponse = await axios.get(`${SWAPI_BASE_URL}/people/`);
-      setCharacterData(characterResponse.data.results);
-
-      const planetResponse = await axios.get(`${SWAPI_BASE_URL}/planets/`);
-      setPlanetData(planetResponse.data.results);
-
-      const starshipResponse = await axios.get(`${SWAPI_BASE_URL}/starships/`);
-      setStarshipData(starshipResponse.data.results);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    setCharacterData((prevData) => [...prevData, ...characters]);
+  }, [characters]);
 
   const searchItems = async () => {
     try {
@@ -92,6 +104,10 @@ const Encyclopedia = () => {
       default:
         return [];
     }
+  };
+
+  const addCharacter = (newCharacter) => {
+    setCharacters([...characters, newCharacter]);
   };
 
   return (
@@ -199,6 +215,7 @@ const Encyclopedia = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <AddCharacterModal addCharacter={addCharacter} />
     </Container>
   );
 };
