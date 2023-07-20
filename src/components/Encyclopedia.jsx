@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './style.css'
+import './style.css';
 import { Form, Button, Card, Container, Row, Col, Nav, Modal } from 'react-bootstrap';
 import AddCharacterModal from './add-character/AddCharacterForm';
 import AddPlanetModal from './add-planet/AddPlanetModal';
 import AddStarshipModal from './add-starship/AddStarshipModal';
+import CharacterListModal from './deliting characters/CharacterListModal';
+import PlanetListModal from './deleting-planets/PlanetListModal';
+import StarshipListModal from './deleting-starships/StarshipListModal';
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
@@ -21,6 +24,42 @@ const Encyclopedia = () => {
   const [planetData, setPlanetData] = useState([]);
   const [starshipData, setStarshipData] = useState([]);
   const [characters, setCharacters] = useState([]);
+  const [showCharacterListModal, setShowCharacterListModal] = useState(false);
+  const [showPlanetListModal, setShowPlanetListModal] = useState(false);
+  const [showStarshipListModal, setShowStarshipListModal] = useState(false);
+  const [addedCharacters, setAddedCharacters] = useState([]);
+  const [addedPlanets, setAddedPlanets] = useState([]);
+  const [addedStarships, setAddedStarships] = useState([]);
+
+  const handleDeleteCharacter = (characterToDelete) => {
+    const updatedCharacters = addedCharacters.filter(
+      (character) => character.name !== characterToDelete.name
+    );
+    setAddedCharacters(updatedCharacters);
+    saveToLocalStorage('characters', updatedCharacters);
+  };
+
+  const handleDeletePlanet = (planetToDelete) => {
+    const updatedPlanets = addedPlanets.filter(
+      (planet) => planet.name !== planetToDelete.name
+    );
+    setAddedPlanets(updatedPlanets);
+    saveToLocalStorage('planets', updatedPlanets);
+  };
+
+  const handleDeleteStarship = (starshipToDelete) => {
+    const updatedStarships = addedStarships.filter(
+      (starship) => starship.name !== starshipToDelete.name
+    );
+    setAddedStarships(updatedStarships);
+    saveToLocalStorage('starships', updatedStarships);
+  };
+
+  useEffect(() => {
+    setAddedCharacters(loadFromLocalStorage('characters') || []);
+    setAddedPlanets(loadFromLocalStorage('planets') || []);
+    setAddedStarships(loadFromLocalStorage('starships') || []);
+  }, []);
 
   const handleCloseAddCharacterModal = () => {
     setShowAddCharacterModal(false);
@@ -41,7 +80,7 @@ const Encyclopedia = () => {
       console.log('Error saving data to local storage:', error);
     }
   };
-  
+
   const loadFromLocalStorage = (key) => {
     try {
       const data = localStorage.getItem(key);
@@ -72,15 +111,14 @@ const Encyclopedia = () => {
         }
 
         const storedPlanets = loadFromLocalStorage('planets');
-        if (storedPlanets){
+        if (storedPlanets) {
           isMounted && setPlanetData(storedPlanets);
         }
 
         const storedStarships = loadFromLocalStorage('starships');
         if (storedStarships) {
-          isMounted && setStarshipData(storedStarships)
+          isMounted && setStarshipData(storedStarships);
         }
-
       } catch (error) {
         console.log(error);
       }
@@ -173,7 +211,6 @@ const Encyclopedia = () => {
     saveToLocalStorage('planets', [...planetData, newPlanet]);
   };
 
-
   return (
     <Container className="my-4">
       <h1 className="mb-4">Star Wars Encyclopedia</h1>
@@ -189,18 +226,61 @@ const Encyclopedia = () => {
         </Nav.Item>
       </Nav>
       <Form>
-        <Form.Group controlId="searchForm" className="mb-3">
+      <Row className="align-items-end">
+        <Col xs={12} md={9} className="mb-3">
           <Form.Control
             type="text"
             placeholder={`Search for ${activeTab}`}
             value={searchTerm}
             onChange={handleSearchChange}
           />
-        </Form.Group>
-        <Button variant="primary" onClick={searchItems} className="mb-3">
-          Search
+        </Col>
+        <Col xs={12} md={3} className="mb-3 d-grid">
+          <Button variant="primary" onClick={searchItems}>
+            Search
+          </Button>
+        </Col>
+      </Row>
+    </Form>
+      {activeTab === 'characters' && (
+      <>
+        <CharacterListModal
+          show={showCharacterListModal}
+          characters={addedCharacters}
+          onClose={() => setShowCharacterListModal(false)}
+          onDelete={handleDeleteCharacter}
+        />
+        <Button className='sacpsm' variant="primary" onClick={() => setShowCharacterListModal(true)}>
+          Show Added Characters
         </Button>
-      </Form>
+      </>
+    )}
+    {activeTab === 'planets' && (
+      <>
+        <PlanetListModal
+          show={showPlanetListModal}
+          planets={addedPlanets}
+          onClose={() => setShowPlanetListModal(false)}
+          onDelete={handleDeletePlanet}
+        />
+        <Button className='sacpsm' variant="primary" onClick={() => setShowPlanetListModal(true)}>
+          Show Added Planets
+        </Button>
+      </>
+    )}
+    {activeTab === 'starships' && (
+      <>
+        <StarshipListModal
+          show={showStarshipListModal}
+          starships={addedStarships}
+          onClose={() => setShowStarshipListModal(false)}
+          onDelete={handleDeleteStarship}
+        />
+        <Button className='sacpsm' variant="primary" onClick={() => setShowStarshipListModal(true)}>
+          Show Added Starships
+        </Button>
+      </>
+    )}
       <Row xs={1} md={2} lg={3} xl={4} className="g-4">
         {searchResults.length > 0
           ? searchResults.map((item, index) => (
@@ -300,7 +380,7 @@ const Encyclopedia = () => {
             show={showAddStarshipModal}
             handleClose={handleCloseAddStarshipModal}
           />
-          )}
+        )}
       </div>
     </Container>
   );
