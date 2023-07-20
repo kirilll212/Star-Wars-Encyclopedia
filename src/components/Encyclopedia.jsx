@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './style.css';
 import { Form, Button, Card, Container, Row, Col, Nav, Modal } from 'react-bootstrap';
@@ -30,6 +31,7 @@ const Encyclopedia = () => {
   const [addedCharacters, setAddedCharacters] = useState([]);
   const [addedPlanets, setAddedPlanets] = useState([]);
   const [addedStarships, setAddedStarships] = useState([]);
+  const navigate = useNavigate();
 
   const handleDeleteCharacter = (characterToDelete) => {
     const updatedCharacters = addedCharacters.filter(
@@ -211,9 +213,18 @@ const Encyclopedia = () => {
     saveToLocalStorage('planets', [...planetData, newPlanet]);
   };
 
+  const handleLogout = () => {
+    navigate('/')
+  }
+
   return (
     <Container className="my-4">
       <h1 className="mb-4">Star Wars Encyclopedia</h1>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <Button className='btn btn-danger me-md-2' onClick={handleLogout}>
+          Logout
+        </Button>
+      </div>
       <Nav variant="tabs" activeKey={activeTab} onSelect={handleTabChange} className="mb-3">
         <Nav.Item>
           <Nav.Link eventKey="characters">Characters</Nav.Link>
