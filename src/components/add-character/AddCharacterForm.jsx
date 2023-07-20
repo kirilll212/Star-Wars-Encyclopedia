@@ -40,7 +40,6 @@ const AddCharacterModal = ({ addCharacter }) => {
     event.preventDefault();
     addCharacter({ ...newCharacter });
     handleClose();
-    console.log(newCharacter);
   };  
 
   return (

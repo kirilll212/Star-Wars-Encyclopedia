@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './style.css'
 import { Form, Button, Card, Container, Row, Col, Nav, Modal } from 'react-bootstrap';
 import AddCharacterModal from './add-character/AddCharacterForm';
+import AddPlanetModal from './add-planet/AddPlanetModal';
+import AddStarshipModal from './add-starship/AddStarshipModal';
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
@@ -10,11 +13,44 @@ const Encyclopedia = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [activeTab, setActiveTab] = useState('characters');
   const [showModal, setShowModal] = useState(false);
+  const [showAddCharacterModal, setShowAddCharacterModal] = useState(false);
+  const [showAddPlanetModal, setShowAddPlanetModal] = useState(false);
+  const [showAddStarshipModal, setShowAddStarshipModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [characterData, setCharacterData] = useState([]);
   const [planetData, setPlanetData] = useState([]);
   const [starshipData, setStarshipData] = useState([]);
   const [characters, setCharacters] = useState([]);
+
+  const handleCloseAddCharacterModal = () => {
+    setShowAddCharacterModal(false);
+  };
+
+  const handleCloseAddPlanetModal = () => {
+    setShowAddPlanetModal(false);
+  };
+
+  const handleCloseAddStarshipModal = () => {
+    setShowAddStarshipModal(false);
+  };
+
+  const saveToLocalStorage = (key, data) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.log('Error saving data to local storage:', error);
+    }
+  };
+  
+  const loadFromLocalStorage = (key) => {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    } catch (error) {
+      console.log('Error loading data from local storage:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -29,6 +65,22 @@ const Encyclopedia = () => {
 
         const starshipResponse = await axios.get(`${SWAPI_BASE_URL}/starships/`);
         isMounted && setStarshipData(starshipResponse.data.results);
+
+        const storedCharacters = loadFromLocalStorage('characters');
+        if (storedCharacters) {
+          isMounted && setCharacterData(storedCharacters);
+        }
+
+        const storedPlanets = loadFromLocalStorage('planets');
+        if (storedPlanets){
+          isMounted && setPlanetData(storedPlanets);
+        }
+
+        const storedStarships = loadFromLocalStorage('starships');
+        if (storedStarships) {
+          isMounted && setStarshipData(storedStarships)
+        }
+
       } catch (error) {
         console.log(error);
       }
@@ -42,7 +94,7 @@ const Encyclopedia = () => {
   }, []);
 
   useEffect(() => {
-    setCharacterData((prevData) => [...prevData, ...characters]);
+    setCharacters((prevData) => [...prevData, ...characters]);
   }, [characters]);
 
   const searchItems = async () => {
@@ -107,8 +159,20 @@ const Encyclopedia = () => {
   };
 
   const addCharacter = (newCharacter) => {
-    setCharacters([...characters, newCharacter]);
+    setCharacterData((prevData) => [...prevData, newCharacter]);
+    saveToLocalStorage('characters', [...characterData, newCharacter]);
   };
+
+  const addStarship = (newStarship) => {
+    setStarshipData((prevData) => [...prevData, newStarship]);
+    saveToLocalStorage('starships', [...starshipData, newStarship]);
+  };
+
+  const addPlanet = (newPlanet) => {
+    setPlanetData((prevData) => [...prevData, newPlanet]);
+    saveToLocalStorage('planets', [...planetData, newPlanet]);
+  };
+
 
   return (
     <Container className="my-4">
@@ -215,7 +279,29 @@ const Encyclopedia = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <AddCharacterModal addCharacter={addCharacter} />
+      <div className="button-container">
+        {activeTab === 'characters' && (
+          <AddCharacterModal
+            addCharacter={addCharacter}
+            show={showAddCharacterModal}
+            handleClose={handleCloseAddCharacterModal}
+          />
+        )}
+        {activeTab === 'planets' && (
+          <AddPlanetModal
+            addPlanet={addPlanet}
+            show={showAddPlanetModal}
+            handleClose={handleCloseAddPlanetModal}
+          />
+        )}
+        {activeTab === 'starships' && (
+          <AddStarshipModal
+            addStarship={addStarship}
+            show={showAddStarshipModal}
+            handleClose={handleCloseAddStarshipModal}
+          />
+          )}
+      </div>
     </Container>
   );
 };
