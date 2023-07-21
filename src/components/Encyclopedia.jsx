@@ -51,7 +51,7 @@ const Encyclopedia = () => {
     };
   };
 
-  const searchItems = useCallback( async () => {
+  const searchItems = useCallback(async () => {
     try {
       let url = '';
       switch (activeTab) {
@@ -173,17 +173,17 @@ const Encyclopedia = () => {
 
         const storedCharacters = loadFromLocalStorage('characters');
         if (storedCharacters) {
-          isMounted && setAddedCharacters(storedCharacters);
+          isMounted && setCharacterData(storedCharacters);
         }
 
         const storedPlanets = loadFromLocalStorage('planets');
         if (storedPlanets) {
-          isMounted && setAddedPlanets(storedPlanets);
+          isMounted && setPlanetData(storedPlanets);
         }
 
         const storedStarships = loadFromLocalStorage('starships');
         if (storedStarships) {
-          isMounted && setAddedStarships(storedStarships);
+          isMounted && setStarshipData(storedStarships);
         }
       } catch (error) {
         console.log(error);
@@ -203,7 +203,7 @@ const Encyclopedia = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      searchItems(); 
+      searchItems();
     } else {
       const startIndex = (currentPage - 1) * ENTRIES_PER_PAGE;
       const endIndex = startIndex + ENTRIES_PER_PAGE;
@@ -211,7 +211,7 @@ const Encyclopedia = () => {
       const paginatedData = data.slice(startIndex, endIndex);
       setSearchResults(paginatedData);
     }
-  }, [currentPage, searchTerm, searchItems, getTabData]);
+  }, [currentPage, getTabData, searchItems, searchTerm]);
 
 
 
