@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Form, Button, Card, Container, Row, Col, Nav } from 'react-bootstrap';
+import './style.css'
+import { Form, Button, Card, Container, Row, Col, Nav, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import Pagination from './pagination/Pagination';
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
@@ -8,26 +11,15 @@ const Encyclopedia = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [activeTab, setActiveTab] = useState('characters');
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loggedInUser, setLoggedInUser] = useState('');
+  const entriesPerPage = 5;
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
+  const navigate = useNavigate();
 
-  const fetchAllData = async () => {
-    try {
-      await Promise.all([
-        axios.get(`${SWAPI_BASE_URL}/people/`),
-        axios.get(`${SWAPI_BASE_URL}/planets/`),
-        axios.get(`${SWAPI_BASE_URL}/starships/`),
-      ]);
-
-      // Обробка та збереження даних може бути додана в майбутньому
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const searchItems = async () => {
+  const fetchCurrentTabData = useCallback(async () => {
+    setLoading(true);
     try {
       let url = '';
       switch (activeTab) {
@@ -50,10 +42,23 @@ const Encyclopedia = () => {
       } else {
         setSearchResults([]);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
-  };
+  }, [activeTab, searchTerm]);
+
+  useEffect(() => {
+    fetchCurrentTabData();
+  }, [activeTab, currentPage, fetchCurrentTabData]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('loggedInUser');
+    if (storedUser) {
+      setLoggedInUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -63,11 +68,37 @@ const Encyclopedia = () => {
     setActiveTab(tab);
     setSearchTerm('');
     setSearchResults([]);
+    setCurrentPage(1);
   };
+
+  const handleCardClick = (item) => {
+    navigate('/informationPage', {
+      state: { name: item.name, details: item },
+    });
+  };
+
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = searchResults.slice(indexOfFirstEntry, indexOfLastEntry);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('loggedInUser')
+    navigate('/')
+  }
 
   return (
     <Container className="my-4">
-      <h1 className="mb-4">Star Wars Encyclopedia</h1>
+      <div className='header'>
+        <h1 className="mb-4">Star Wars Encyclopedia</h1>
+        <span className='text-muted'>Logged by: {loggedInUser}</span>
+      </div>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button className="btn btn-danger me-md-2" type="button" onClick={handleLogout}>Logout</button>
+      </div>
       <Nav variant="tabs" activeKey={activeTab} onSelect={handleTabChange} className="mb-3">
         <Nav.Item>
           <Nav.Link eventKey="characters">Characters</Nav.Link>
@@ -88,39 +119,57 @@ const Encyclopedia = () => {
             onChange={handleSearchChange}
           />
         </Form.Group>
-        <Button variant="primary" onClick={searchItems} className="mb-3">
+        <Button variant="primary" onClick={fetchCurrentTabData} className="mb-3">
           Search
         </Button>
       </Form>
-      <Row xs={1} md={2} lg={3} xl={4} className="g-4">
-        {searchResults.map((item, index) => (
-          <Col key={index}>
-            <Card className="h-100">
-              <Card.Body>
-                <Card.Title>{item.name}</Card.Title>
-                {activeTab === 'characters' && (
-                  <>
-                    <Card.Text>Height: {item.height}</Card.Text>
-                    <Card.Text>Mass: {item.mass}</Card.Text>
-                  </>
-                )}
-                {activeTab === 'planets' && (
-                  <>
-                    <Card.Text>Population: {item.population}</Card.Text>
-                    <Card.Text>Terrain: {item.terrain}</Card.Text>
-                  </>
-                )}
-                {activeTab === 'starships' && (
-                  <>
-                    <Card.Text>Model: {item.model}</Card.Text>
-                    <Card.Text>Manufacturer: {item.manufacturer}</Card.Text>
-                  </>
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      {loading ? (
+        <div className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      ) : (
+        <Row xs={1} md={2} lg={3} xl={4} className="g-4">
+          {currentEntries.map((item, index) => (
+            <Col key={index}>
+              <div className="clickable-card-wrapper" onClick={() => handleCardClick(item)}>
+                <Card className="h-100">
+                  <Card.Body>
+                    <Card.Title>{item.name}</Card.Title>
+                    {activeTab === 'characters' && (
+                      <>
+                        <Card.Text>Height: {item.height}</Card.Text>
+                        <Card.Text>Mass: {item.mass}</Card.Text>
+                      </>
+                    )}
+                    {activeTab === 'planets' && (
+                      <>
+                        <Card.Text>Population: {item.population}</Card.Text>
+                        <Card.Text>Terrain: {item.terrain}</Card.Text>
+                      </>
+                    )}
+                    {activeTab === 'starships' && (
+                      <>
+                        <Card.Text>Model: {item.model}</Card.Text>
+                        <Card.Text>Manufacturer: {item.manufacturer}</Card.Text>
+                      </>
+                    )}
+                  </Card.Body>
+                </Card>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      )}
+      <div className='pagination-container'>
+        <Pagination
+          currentPage={currentPage}
+          totalEntries={searchResults.length}
+          entriesPerPage={entriesPerPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </Container>
   );
 };

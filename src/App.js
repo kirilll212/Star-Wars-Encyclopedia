@@ -4,6 +4,7 @@ import Encyclopedia from './components/Encyclopedia';
 import Login from './components/Auth-Reg-Form/form/Login'
 import Signup from './components/Auth-Reg-Form/form/Signup'
 import Password from './components/Auth-Reg-Form/form/password'
+import InformationPage from './components/information page/informationPage';
 
 const App = () => {
   return (
@@ -19,12 +20,16 @@ const App = () => {
             element={<Signup />}
           />
           <Route
+            path='password'
+            element={<Password />}
+          />
+          <Route
             path='/Encyclopedia'
             element={<Encyclopedia />}
           />
           <Route
-            path='password'
-            element={<Password />}
+            path='/informationPage'
+            element={<InformationPage />}
           />
         </Routes>
       </BrowserRouter>

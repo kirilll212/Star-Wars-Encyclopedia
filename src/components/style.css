@@ -1,61 +1,19 @@
-.button-container{
-    margin-top: 20px;
+.clickable-card-wrapper {
+  height: 165px; 
+  cursor: pointer;
 }
-
-.sacpsm{
+  
+.g-4 .col {
   margin-bottom: 20px;
 }
+  
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
-.character-list-modal {
-    .modal-dialog {
-      max-width: 400px;
-    }
-  
-    .modal-content {
-      padding: 1rem;
-      border-radius: 10px;
-    }
-  
-    .modal-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-  
-    .character-list {
-      max-height: 300px;
-      overflow-y: auto;
-      border: 1px solid #ced4da;
-      border-radius: 5px;
-      margin-bottom: 1rem;
-      padding: 0.5rem;
-    }
-  
-    .character-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem;
-      border-bottom: 1px solid #ced4da;
-    }
-  
-    .character-item:last-child {
-      border-bottom: none;
-    }
-  
-    .character-item button {
-      color: #dc3545;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-    }
-  
-    .character-item button:hover {
-      text-decoration: underline;
-    }
-  
-    .close-btn {
-      width: 100%;
-      margin-top: 1rem;
-    }
-  }
+.header{
+  display: flex;
+  justify-content: space-between;
+}
