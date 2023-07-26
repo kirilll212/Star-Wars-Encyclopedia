@@ -94,7 +94,7 @@ const Encyclopedia = () => {
     <Container className="my-4">
       <div className='header'>
         <h1 className="mb-4">Star Wars Encyclopedia</h1>
-        <span className='text-muted'>Logged by: {loggedInUser}</span>
+        <h4 className='text-muted'>Logged by: {loggedInUser}</h4>
       </div>
       <div class="d-grid gap-2 d-md-flex justify-content-md-end">
         <button className="btn btn-danger me-md-2" type="button" onClick={handleLogout}>Logout</button>
@@ -141,6 +141,7 @@ const Encyclopedia = () => {
                       <>
                         <Card.Text>Height: {item.height}</Card.Text>
                         <Card.Text>Mass: {item.mass}</Card.Text>
+                        <Card.Text>Hair Color: {item.hair_color}</Card.Text>
                       </>
                     )}
                     {activeTab === 'planets' && (
