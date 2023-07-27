@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import './style.css';
@@ -18,6 +18,7 @@ const SWAPI_BASE_URL = 'https://swapi.dev/api';
 const Encyclopedia = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loggedInUser, setLoggedInUser] = useState('');
 
   const {
     searchTerm,
@@ -25,7 +26,6 @@ const Encyclopedia = () => {
     activeTab,
     loading,
     currentPage,
-    loggedInUser,
   } = useSelector((state) => state.encyclopedia);
 
   const fetchCurrentTabData = useCallback(async () => {
@@ -57,11 +57,19 @@ const Encyclopedia = () => {
       console.log(error);
       dispatch(setLoading(false));
     }
-  }, [activeTab, dispatch, searchTerm]); // Додаємо activeTab, dispatch та searchTerm у залежності
+  }, [activeTab, dispatch, searchTerm]);
 
   useEffect(() => {
     fetchCurrentTabData();
   }, [activeTab, currentPage, fetchCurrentTabData]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('loggedInUser');
+
+    if(storedUser){
+      setLoggedInUser(storedUser);
+    }
+  }, [])
 
   const handleSearchChange = (event) => {
     dispatch(setSearchTerm(event.target.value));
