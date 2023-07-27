@@ -1,10 +1,10 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation and useNavigate hooks
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Button } from 'react-bootstrap';
 
 const InformationPage = () => {
-  const location = useLocation(); // Initialize useLocation hook
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const { name, details } = location.state;
 

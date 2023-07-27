@@ -1,25 +1,35 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import './style.css'
+import './style.css';
 import { Form, Button, Card, Container, Row, Col, Nav, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Pagination from './pagination/Pagination';
+import {
+  setSearchTerm,
+  setSearchResults,
+  setActiveTab,
+  setLoading,
+  setCurrentPage,
+} from '../redux/slice';
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
 const Encyclopedia = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [activeTab, setActiveTab] = useState('characters');
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loggedInUser, setLoggedInUser] = useState('');
-  const entriesPerPage = 5;
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const {
+    searchTerm,
+    searchResults,
+    activeTab,
+    loading,
+    currentPage,
+    loggedInUser,
+  } = useSelector((state) => state.encyclopedia);
+
   const fetchCurrentTabData = useCallback(async () => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       let url = '';
       switch (activeTab) {
@@ -38,37 +48,30 @@ const Encyclopedia = () => {
 
       if (url) {
         const response = await axios.get(url);
-        setSearchResults(response.data.results);
+        dispatch(setSearchResults(response.data.results));
       } else {
-        setSearchResults([]);
+        dispatch(setSearchResults([]));
       }
-      setLoading(false);
+      dispatch(setLoading(false));
     } catch (error) {
       console.log(error);
-      setLoading(false);
+      dispatch(setLoading(false));
     }
-  }, [activeTab, searchTerm]);
+  }, [activeTab, dispatch, searchTerm]); // Додаємо activeTab, dispatch та searchTerm у залежності
 
   useEffect(() => {
     fetchCurrentTabData();
   }, [activeTab, currentPage, fetchCurrentTabData]);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('loggedInUser');
-    if (storedUser) {
-      setLoggedInUser(JSON.parse(storedUser));
-    }
-  }, []);
-
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+    dispatch(setSearchTerm(event.target.value));
   };
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSearchTerm('');
-    setSearchResults([]);
-    setCurrentPage(1);
+    dispatch(setActiveTab(tab));
+    dispatch(setSearchTerm(''));
+    dispatch(setSearchResults([]));
+    dispatch(setCurrentPage(1));
   };
 
   const handleCardClick = (item) => {
@@ -77,18 +80,19 @@ const Encyclopedia = () => {
     });
   };
 
+  const entriesPerPage = 5;
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = searchResults.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    dispatch(setCurrentPage(pageNumber));
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('loggedInUser')
-    navigate('/')
-  }
+    localStorage.removeItem('loggedInUser');
+    navigate('/');
+  };
 
   return (
     <Container className="my-4">
