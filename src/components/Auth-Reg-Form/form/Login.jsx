@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SHA256 } from 'crypto-js';
-import './formStyle.css'
+import './formStyle.css';
+import { Container, Form, Button, Card } from 'react-bootstrap';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -41,59 +42,51 @@ function Login() {
   }, []);
 
   return (
-    <div className='login template d-flex justify-content-center align-items-center vh-100 bg-info'>
-      <div className='form_container p-5 rounded bg-white'>
-        <form onSubmit={handleFormSubmit}>
-          <h3 className='text-center'>Login</h3>
-          <div className='mb-2'>
-            <label htmlFor='email'>Email</label>
-            <input
-              type='email'
-              placeholder='Enter your email'
-              className='form-control'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className='mb-2'>
-            <label htmlFor='password'>Password</label>
-            <input
-              type='password'
-              placeholder='Enter your password'
-              className='form-control'
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className='mb-2'>
-            <input
-              type='checkbox'
-              className='custom-control custom-checkbox'
-              id='check'
-            />
-            <label htmlFor='check' className='custom-input-label ms-2'>
-              Remember Me!
-            </label>
-          </div>
-          <div className='d-grid mt-2'>
-            <button className='btn btn-primary' type='submit'>
-              Login
-            </button>
-            <Link to='/NewTodoList' className='decor text-white'></Link>
-          </div>
-          <p className='text-end mt-2'>
+    <Container fluid className='d-flex justify-content-center align-items-center vh-100 login-container'>
+      <Card className='login-card'>
+        <Card.Body>
+          <h3 className='text-center mb-4'>Login</h3>
+          <Form onSubmit={handleFormSubmit}>
+            <Form.Group controlId='formBasicEmail'>
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type='email'
+                placeholder='Enter your email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId='formBasicPassword' className='mt-3'>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type='password'
+                placeholder='Enter your password'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <div className='d-grid mt-4'>
+              <Button variant='primary' type='submit'>
+                Login
+              </Button>
+            </div>
+          </Form>
+
+          {errorMessage && <p className='text-danger mt-3'>{errorMessage}</p>}
+
+          <div className='text-center mt-3'>
             <Link to='/password'>Forgot Password?</Link>
-            <Link to='/signup' className='ms-2'>
-              Sign Up
-            </Link>
-          </p>
-          {errorMessage && (
-            <p className='text-danger'>{errorMessage}</p>
-          )}
-        </form>
-      </div>
-    </div>
+          </div>
+          <div className='text-center mt-3'>
+            Don't have an account? <Link to='/signup'>Sign Up</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
 

@@ -1,7 +1,6 @@
-import React, {useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import './style.css';
 import { Form, Button, Card, Container, Row, Col, Nav, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Pagination from './pagination/Pagination';
@@ -66,10 +65,10 @@ const Encyclopedia = () => {
   useEffect(() => {
     const storedUser = localStorage.getItem('loggedInUser');
 
-    if(storedUser){
+    if (storedUser) {
       setLoggedInUser(storedUser);
     }
-  }, [])
+  }, []);
 
   const handleSearchChange = (event) => {
     dispatch(setSearchTerm(event.target.value));
@@ -104,26 +103,34 @@ const Encyclopedia = () => {
 
   return (
     <Container className="my-4">
-      <div className='header'>
-        <h1 className="mb-4">Star Wars Encyclopedia</h1>
-        <h4 className='text-muted'>Logged by: {loggedInUser}</h4>
+      <div className="header text-center mb-4">
+        <h1 className="mb-4 text-warning">Star Wars Encyclopedia</h1>
+        <div className="d-flex justify-content-center align-items-center">
+          <h4 className="text-muted me-2">Logged by: {loggedInUser}</h4>
+          <Button variant="danger" onClick={handleLogout} className="text-uppercase">
+            Logout
+          </Button>
+        </div>
       </div>
-      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <button className="btn btn-danger me-md-2" type="button" onClick={handleLogout}>Logout</button>
-      </div>
-      <Nav variant="tabs" activeKey={activeTab} onSelect={handleTabChange} className="mb-3">
+      <Nav variant="tabs" activeKey={activeTab} onSelect={handleTabChange} className="mb-3 justify-content-center">
         <Nav.Item>
-          <Nav.Link eventKey="characters">Characters</Nav.Link>
+          <Nav.Link eventKey="characters" className="text-uppercase">
+            Characters
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link eventKey="planets">Planets</Nav.Link>
+          <Nav.Link eventKey="planets" className="text-uppercase">
+            Planets
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link eventKey="starships">Starships</Nav.Link>
+          <Nav.Link eventKey="starships" className="text-uppercase">
+            Starships
+          </Nav.Link>
         </Nav.Item>
       </Nav>
-      <Form>
-        <Form.Group controlId="searchForm" className="mb-3">
+      <Form className="d-flex justify-content-center mb-3">
+        <Form.Group controlId="searchForm" className="m-0">
           <Form.Control
             type="text"
             placeholder={`Search for ${activeTab}`}
@@ -131,7 +138,7 @@ const Encyclopedia = () => {
             onChange={handleSearchChange}
           />
         </Form.Group>
-        <Button variant="primary" onClick={fetchCurrentTabData} className="mb-3">
+        <Button variant="primary" onClick={fetchCurrentTabData} className="ms-2">
           Search
         </Button>
       </Form>
@@ -146,9 +153,9 @@ const Encyclopedia = () => {
           {currentEntries.map((item, index) => (
             <Col key={index}>
               <div className="clickable-card-wrapper" onClick={() => handleCardClick(item)}>
-                <Card className="h-100">
+                <Card className="h-100 shadow">
                   <Card.Body>
-                    <Card.Title>{item.name}</Card.Title>
+                    <Card.Title className="text-capitalize">{item.name}</Card.Title>
                     {activeTab === 'characters' && (
                       <>
                         <Card.Text>Height: {item.height}</Card.Text>
@@ -175,7 +182,7 @@ const Encyclopedia = () => {
           ))}
         </Row>
       )}
-      <div className='pagination-container'>
+      <div className="pagination-container d-flex justify-content-center mt-4">
         <Pagination
           currentPage={currentPage}
           totalEntries={searchResults.length}
