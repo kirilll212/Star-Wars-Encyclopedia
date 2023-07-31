@@ -45,7 +45,7 @@ function Login() {
     <Container fluid className='d-flex justify-content-center align-items-center vh-100 login-container'>
       <Card className='login-card'>
         <Card.Body>
-          <h3 className='text-center mb-4'>Login</h3>
+          <h3 className='text-center text-uppercase mb-4'>Login</h3>
           <Form onSubmit={handleFormSubmit}>
             <Form.Group controlId='formBasicEmail'>
               <Form.Label>Email</Form.Label>

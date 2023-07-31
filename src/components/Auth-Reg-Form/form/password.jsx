@@ -61,7 +61,7 @@ function Password() {
     <div className='login-container template d-flex justify-content-center align-items-center vh-100'>
       <div className='login-card form_container p-5 rounded bg-white'>
         <form onSubmit={handleFormSubmit}>
-          <h3 className='text-center'>Password Restoring</h3>
+          <h3 className='text-center text-uppercase'>Password Restoring</h3>
           <div className='mb-2'>
             <label htmlFor='email'>Email</label>
             <input

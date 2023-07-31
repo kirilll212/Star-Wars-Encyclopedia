@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { Form, Button, Card, Container, Row, Col, Nav, Spinner } from 'react-bootstrap';
+import { Form, Button, Card, Container, Row, Col, Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Pagination from './pagination/Pagination';
 import {
@@ -144,9 +144,7 @@ const Encyclopedia = () => {
       </Form>
       {loading ? (
         <div className="text-center">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <progress role='status'/>
         </div>
       ) : (
         <Row xs={1} md={2} lg={3} xl={4} className="g-4">

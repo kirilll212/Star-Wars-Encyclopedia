@@ -98,7 +98,7 @@ function Signup() {
     <div className="login-container template d-flex justify-content-center align-items-center vh-100 ">
       <div className="login-card form_container p-5 rounded bg-white">
         <form onSubmit={handleFormSubmit}>
-          <h3 className="text-center">Sign Up</h3>
+          <h3 className="text-center text-uppercase">Sign Up</h3>
             <FormInput
                 input="text"
                 onChange={handleNameChange}
