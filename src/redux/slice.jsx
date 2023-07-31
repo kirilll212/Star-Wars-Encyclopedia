@@ -31,14 +31,6 @@ const encyclopediaSlice = createSlice({
     setCurrentPage: (state, action) => {
       state.currentPage = action.payload;
     },
-    setLoggedInUser: (state, action) => {
-      state.loggedInUser = action.payload;
-      localStorage.setItem('loggedInUser', action.payload);
-    },
-    clearLoggedInUser: (state) => {
-      state.loggedInUser = '';
-      localStorage.removeItem('loggedInUser');
-    },
   },
 });
 
@@ -48,8 +40,6 @@ export const {
   setActiveTab,
   setLoading,
   setCurrentPage,
-  setLoggedInUser,
-  clearLoggedInUser,
 } = encyclopediaSlice.actions;
 
 export default encyclopediaSlice.reducer;
