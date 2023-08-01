@@ -12,6 +12,8 @@ import {
   setCurrentPage,
 } from '../redux/slice';
 
+import './style.css'
+
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
 const Encyclopedia = () => {
@@ -104,7 +106,7 @@ const Encyclopedia = () => {
   return (
     <Container className="my-4">
       <div className="header text-center mb-4">
-        <h1 className="mb-4 text-warning">Star Wars Encyclopedia</h1>
+        <h1 className="mb-4 text-warning lighting">Star Wars Encyclopedia</h1>
         <div className="d-flex justify-content-center align-items-center">
           <h4 className="text-muted me-2">Logged by: {loggedInUser}</h4>
           <Button variant="danger" onClick={handleLogout} className="text-uppercase">
