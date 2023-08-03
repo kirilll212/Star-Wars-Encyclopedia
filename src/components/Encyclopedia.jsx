@@ -1,86 +1,69 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Button, Card, Container, Row, Col, Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Pagination from './pagination/Pagination';
-import {
-  setSearchTerm,
-  setSearchResults,
-  setActiveTab,
-  setLoading,
-  setCurrentPage,
-} from '../redux/slice';
-
+import { useQuery } from 'react-query'; // імпортуємо useQuery
 import './style.css'
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
 
+const fetchCurrentTabData = async (activeTab, searchTerm) => {
+  try {
+    let url = '';
+    switch (activeTab) {
+      case 'characters':
+        url = `${SWAPI_BASE_URL}/people/?search=${searchTerm}`;
+        break;
+      case 'planets':
+        url = `${SWAPI_BASE_URL}/planets/?search=${searchTerm}`;
+        break;
+      case 'starships':
+        url = `${SWAPI_BASE_URL}/starships/?search=${searchTerm}`;
+        break;
+      default:
+        break;
+    }
+
+    if (url) {
+      const response = await axios.get(url);
+      return response.data.results;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error('Failed to fetch data');
+  }
+};
+
 const Encyclopedia = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loggedInUser, setLoggedInUser] = useState('');
+  const [activeTab, setActiveTab] = useState('characters');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const {
-    searchTerm,
-    searchResults,
-    activeTab,
-    loading,
-    currentPage,
-  } = useSelector((state) => state.encyclopedia);
-
-  const fetchCurrentTabData = useCallback(async () => {
-    dispatch(setLoading(true));
-    try {
-      let url = '';
-      switch (activeTab) {
-        case 'characters':
-          url = `${SWAPI_BASE_URL}/people/?search=${searchTerm}`;
-          break;
-        case 'planets':
-          url = `${SWAPI_BASE_URL}/planets/?search=${searchTerm}`;
-          break;
-        case 'starships':
-          url = `${SWAPI_BASE_URL}/starships/?search=${searchTerm}`;
-          break;
-        default:
-          break;
-      }
-
-      if (url) {
-        const response = await axios.get(url);
-        dispatch(setSearchResults(response.data.results));
-      } else {
-        dispatch(setSearchResults([]));
-      }
-      dispatch(setLoading(false));
-    } catch (error) {
-      console.log(error);
-      dispatch(setLoading(false));
-    }
-  }, [activeTab, dispatch, searchTerm]);
-
-  useEffect(() => {
-    fetchCurrentTabData();
-  }, [activeTab, currentPage, fetchCurrentTabData]);
+  // Використання useQuery для отримання даних
+  const { data: searchResults, isLoading } = useQuery(['encyclopedia', activeTab, searchTerm], () =>
+    fetchCurrentTabData(activeTab, searchTerm)
+  );
 
   useEffect(() => {
     const storedUser = localStorage.getItem('loggedInUser');
-
     if (storedUser) {
       setLoggedInUser(storedUser);
     }
   }, []);
 
   const handleSearchChange = (event) => {
-    dispatch(setSearchTerm(event.target.value));
+    setSearchTerm(event.target.value);
   };
 
   const handleTabChange = (tab) => {
-    dispatch(setActiveTab(tab));
-    dispatch(setSearchTerm(''));
-    dispatch(setSearchResults([]));
-    dispatch(setCurrentPage(1));
+    setActiveTab(tab);
+    setSearchTerm('');
+    setCurrentPage(1);
   };
 
   const handleCardClick = (item) => {
@@ -92,10 +75,10 @@ const Encyclopedia = () => {
   const entriesPerPage = 5;
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = searchResults.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = searchResults?.slice(indexOfFirstEntry, indexOfLastEntry) || [];
 
   const handlePageChange = (pageNumber) => {
-    dispatch(setCurrentPage(pageNumber));
+    setCurrentPage(pageNumber);
   };
 
   const handleLogout = () => {
@@ -144,7 +127,7 @@ const Encyclopedia = () => {
           Search
         </Button>
       </Form>
-      {loading ? (
+      {isLoading ? (
         <div className="text-center">
           <progress role='status'/>
         </div>
@@ -185,7 +168,7 @@ const Encyclopedia = () => {
       <div className="pagination-container d-flex justify-content-center mt-4">
         <Pagination
           currentPage={currentPage}
-          totalEntries={searchResults.length}
+          totalEntries={searchResults?.length || 0}
           entriesPerPage={entriesPerPage}
           onPageChange={handlePageChange}
         />

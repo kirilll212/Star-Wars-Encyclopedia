@@ -5,13 +5,10 @@ import Login from './components/Auth-Reg-Form/form/Login'
 import Signup from './components/Auth-Reg-Form/form/Signup'
 import Password from './components/Auth-Reg-Form/form/password'
 import InformationPage from './components/information page/informationPage';
-import { Provider } from 'react-redux';
-import store from './redux/store';
 
 const App = () => {
   return (
     <div className="App">
-      <Provider store={store}> 
         <Router>
           <Routes>
             <Route
@@ -36,7 +33,6 @@ const App = () => {
             />
           </Routes>
         </Router>
-      </Provider>
     </div>
   );
 };
