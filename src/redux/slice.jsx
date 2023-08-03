@@ -6,7 +6,6 @@ const initialState = {
   activeTab: 'characters',
   loading: false,
   currentPage: 1,
-  loggedInUser: localStorage.getItem('loggedInUser') || '',
 };
 
 const encyclopediaSlice = createSlice({
