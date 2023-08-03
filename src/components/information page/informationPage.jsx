@@ -22,7 +22,7 @@ const InformationPage = () => {
             Back to Encyclopedia
           </Button>
         </Card.Header>
-        <Card.Body>
+        <Card.Body className='info-card'>
           <ListGroup variant="flush">
             <h2 className="mt-3">Details</h2>
             {Object.entries(details).map(([key, value]) => (

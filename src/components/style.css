@@ -31,7 +31,7 @@
   padding: 0.5rem 0;
 }
 
-.card-body {
+.info-card{
   max-height: calc(100vh - 340px);
   overflow-y: auto;
 }
