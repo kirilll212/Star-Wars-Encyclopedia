@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { SHA256 } from 'crypto-js';
 import './formStyle.css';
 import { Container, Form, Button, Card } from 'react-bootstrap';
+import { useQueryClient } from 'react-query';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ function Login() {
 
       if (foundUser) {
         localStorage.setItem('loggedInUser', JSON.stringify(foundUser.name));
+        queryClient.invalidateQueries('loggedInUser');
         navigate('/Encyclopedia');
       } else {
         setErrorMessage('Invalid email or password');

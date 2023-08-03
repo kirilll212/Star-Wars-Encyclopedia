@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Form, Button, Card, Container, Row, Col, Nav } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Pagination from './pagination/Pagination';
-import { useQuery } from 'react-query'; // імпортуємо useQuery
+import { useQuery } from 'react-query';
 import './style.css'
 
 const SWAPI_BASE_URL = 'https://swapi.dev/api';
