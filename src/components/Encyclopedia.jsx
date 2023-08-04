@@ -56,10 +56,6 @@ const Encyclopedia = () => {
     }
   }, []);
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSearchTerm('');
@@ -120,7 +116,7 @@ const Encyclopedia = () => {
             type="text"
             placeholder={`Search for ${activeTab}`}
             value={searchTerm}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Form.Group>
         <Button variant="primary" onClick={fetchCurrentTabData} className="ms-2">
